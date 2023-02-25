@@ -17,7 +17,7 @@ class SampleSpace:
         sample_space = xr.DataArray(
             data=[(1, 1) for _ in bounds],
             dims=coord_labels,
-            coords={l: bounds[i] for i, l in enumerate(coord_labels)},
+            coords={l: list(bound) for l, bound in zip(coord_labels, bounds)},
         )
         instance = cls(bounds=bounds, sample_space=sample_space)
         return instance
