@@ -1,6 +1,7 @@
 from typing import Sequence
 
 import numpy as np
+import pandas as pd
 import xarray as xr
 from pyDOE import lhs
 
@@ -21,6 +22,10 @@ class SampleSpace:
         )
         instance = cls(bounds=bounds, sample_space=sample_space)
         return instance
+
+    @classmethod
+    def from_bound_dict(cls, bound_dict):
+        return cls.from_bounds(*bound_dict.values(), coord_labels=bound_dict.keys())
 
     @classmethod
     def from_xarray(cls, xr_ds: xr.DataArray):
@@ -100,30 +105,38 @@ class SampleSpace:
         samples = lhs(self.ndims, samples=n_samples, criterion=criterion)
         return self.__rescale_samples(samples)
 
-    def lhs_sample(self, n_samples, criterion=None):
+    def lhs_sample(self, n_samples, criterion=None, labelled=False):
         if self.is_square_space:
-            return self.__uniform_lhs_sample(n_samples, criterion=criterion)
-        samples = lhs(self.ndims, n_samples, criterion=None)
-        norm = self._sample_space
-        for d in self.coord_labels:
-            norm = norm.integrate(d)
-        pdf = self._sample_space / norm
-        return stats.inverse_transform_samples(samples, pdf)
+            samples = self.__uniform_lhs_sample(n_samples, criterion=criterion)
+        else:
+            samples = lhs(self.ndims, n_samples, criterion=None)
+            norm = self._sample_space
+            for d in self.coord_labels:
+                norm = norm.integrate(d)
+            pdf = self._sample_space / norm
+            samples = stats.inverse_transform_samples(samples, pdf)
+        if labelled:
+            return pd.DataFrame(samples, columns=self.coord_labels)
+        return samples
 
-    def uniform(self, n_samples):
+    def uniform(self, n_samples, labelled=False):
         if self.is_square_space:
             ## Cheap method just rescale
             samples = np.random.uniform(size=(n_samples, self.ndims))
-            return self.__rescale_samples(samples)
-        samples = []
-        while len(samples) < n_samples:
-            point = np.random.uniform(
-                low=[b[0] for b in self._bounds], high=[b[1] for b in self._bounds]
-            )
-            if self.inspace(**{k: v for k, v in zip(self.coord_labels, point)}):
-                samples.append(point)
+            samples = self.__rescale_samples(samples)
+        else:
+            samples = []
+            while len(samples) < n_samples:
+                point = np.random.uniform(
+                    low=[b[0] for b in self._bounds], high=[b[1] for b in self._bounds]
+                )
+                if self.inspace(**{k: v for k, v in zip(self.coord_labels, point)}):
+                    samples.append(point)
 
-        return np.array(samples)
+            samples = np.array(samples)
+        if labelled:
+            return pd.DataFrame(samples, columns=self.coord_labels)
+        return samples
 
     def inspace(self, **r) -> bool:
         if self._sample_space is None:
