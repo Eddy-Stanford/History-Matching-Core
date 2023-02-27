@@ -150,17 +150,16 @@ class SampleSpace:
             return bool(self._sample_space.interp(**r) > 0.5)
 
     def to_xarray(self, resolution=None):
-        if resolution:
-            return (
-                self._sample_space.interp(
-                    coords={
-                        k: np.linspace(v[0], v[1], resolution)
-                        for k, v in self.bounds_dict.items()
-                    }
-                )
-                > 0.5
+        resolution = self.DEFAULT_RESOLUTION if resolution is None else resolution
+        return (
+            self._sample_space.interp(
+                coords={
+                    k: np.linspace(v[0], v[1], resolution)
+                    for k, v in self.bounds_dict.items()
+                }
             )
-        return self._sample_space > 0.5
+            > 0.5
+        )
 
     def intersection(self, other: "SampleSpace"):
         if self.coord_labels != other.coord_labels:
