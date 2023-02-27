@@ -14,23 +14,23 @@ def implausibility(
     obs_err: np.ndarray,
 ):
     """
-    Calculate implausability score for set of predictions
+    Calculate implausibility score for set of predictions
 
     Input:
     predict_mean (ndarray) - (n_features,n_samples) Array of predictions
     obs_mean (ndarray) - (n_features) Mean of observational data
-    predict_err - Standard Error in predictoins
+    predict_err - Standard Error in predictions
     obs_err- Standard error in mean of observations
     """
     n_features = obs_mean.shape[0]
-    return xr.concat(
-        [
-            np.sqrt(
-                np.abs(predict_mean[i] - obs_mean[i])
-                / np.sqrt(predict_err[i] ** 2 + obs_err[i] ** 2)
-            )
-            for i in range(n_features)
-        ],dim='n_features'
+    return np.sqrt(
+        np.sum(
+            [
+                (predict_mean[i] - obs_mean[i]) ** 2
+                / (predict_err[i] ** 2 + obs_err[i] ** 2)
+                for i in range(n_features)
+            ]
+        )
     )
 
 
