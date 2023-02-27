@@ -22,9 +22,15 @@ def implausibility(
     predict_err - Standard Error in predictoins
     obs_err- Standard error in mean of observations
     """
-    return np.sqrt(
-        np.abs(predict_mean - obs_mean[:, None])
-        / np.sqrt(predict_err[:, None] ** 2 + obs_err**2)
+    n_features = obs_mean.shape[0]
+    return xr.concat(
+        [
+            np.sqrt(
+                np.abs(predict_mean[i] - obs_mean[i])
+                / np.sqrt(predict_err[i] ** 2 + obs_err[i] ** 2)
+            )
+            for i in range(n_features)
+        ],dim='n_features'
     )
 
 
