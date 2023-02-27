@@ -23,6 +23,8 @@ def implausibility(
     obs_err- Standard error in mean of observations
     """
     n_features = obs_mean.shape[0]
+    if n_features != predict_mean.shape[0]:
+        raise ValueError("Incompatible shapes between observations and predictions")
     return np.sqrt(
         np.sum(
             [
