@@ -31,7 +31,8 @@ def implausibility(
                 (predict_mean[i] - obs_mean[i]) ** 2
                 / (predict_err[i] ** 2 + obs_err[i] ** 2)
                 for i in range(n_features)
-            ]
+            ],
+            axis=0,
         )
     )
 
@@ -47,6 +48,10 @@ class GPEmulator(BaseEstimator):
         self.__std_y = None
 
     def fit(self, X, y, y_err):
+        if X.shape[-1] != self.n_features:
+            raise ValueError(
+                "Last dimension of x do not agree with the specified n_features "
+            )
         if len(y.shape) == 1:
             y = y[:, None]
         if len(y_err.shape) == 1:
@@ -75,9 +80,9 @@ class GPEmulator(BaseEstimator):
         values = np.array([gp.predict(X, return_std=return_std) for gp in self.gps])
         if return_std:
             return np.transpose(
-                (values[:, 0, :] * self.__std_y) + self.__mean_y
-            ), np.transpose(values[:, 1, :] * self.__std_y)
-        return np.transpose(values * self.__std_y + self.__mean_y)
+                (values[:, 0, :] * self.__std_y[:, None]) + self.__mean_y[:, None]
+            ), np.transpose(values[:, 1, :] * self.__std_y[:, None])
+        return np.transpose(values * self.__std_y[:, None] + self.__mean_y[:, None])
 
     def predict_over_space(self, space: SampleSpace, return_std=False, resolution=None):
         """
