@@ -8,8 +8,8 @@ from ..samples import SampleSpace
 
 
 def implausibility(
-    predict_mean: np.ndarray,
-    predict_err: np.ndarray,
+    predict_mean: xr.DataArray,
+    predict_err: xr.DataArray,
     obs_mean: np.ndarray,
     obs_err: np.ndarray,
 ):
