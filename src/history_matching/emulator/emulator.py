@@ -26,14 +26,14 @@ def implausibility(
     if n_features != predict_mean.shape[0]:
         raise ValueError("Incompatible shapes between observations and predictions")
     return np.sqrt(
-        np.sum(
+        xr.concat(
             [
                 (predict_mean[i] - obs_mean[i]) ** 2
                 / (predict_err[i] ** 2 + obs_err[i] ** 2)
                 for i in range(n_features)
             ],
-            axis=0,
-        )
+            dim="n_features",
+        ).sum(dim="n_features")
     )
 
 
