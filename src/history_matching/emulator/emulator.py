@@ -26,10 +26,15 @@ class GPEmulator(BaseEstimator):
             y = y[:, None]
         if len(y_err.shape) == 1:
             y_err = y_err[:, None]
-        self.__mean_y = np.mean(y, axis=0)
-        self.__std_y = np.std(y, axis=0)
-        y = (y - self.__mean_y) / self.__std_y
-        y_err = y_err / self.__std_y
+        if len(y) != 1:
+            self.__mean_y = np.mean(y, axis=0)
+            self.__std_y = np.std(y, axis=0)
+            y = (y - self.__mean_y) / self.__std_y
+            y_err = y_err / self.__std_y
+        else:
+            self.__mean_y = y
+            self.__std_y = np.ones(y.shape)
+            y = np.zeros(y.shape)
 
         self.scaler.fit(X)
         X = self.scaler.transform(X)
