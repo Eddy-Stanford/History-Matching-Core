@@ -34,7 +34,7 @@ class GPEmulator(BaseEstimator):
         else:
             self.__mean_y = y[0]
             self.__std_y = np.ones(y[0].shape)
-            y = np.zeros(y[0].shape)
+            y = np.zeros(y.shape)
 
         self.scaler.fit(X)
         X = self.scaler.transform(X)
