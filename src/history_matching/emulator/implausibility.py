@@ -1,3 +1,5 @@
+from typing import List, Union
+
 import numpy as np
 import xarray as xr
 from scipy.stats import chi2
@@ -24,11 +26,11 @@ def implausibility_inf(
 
 
 def implausibility2(
-    predict_mean: xr.DataArray,
-    predict_err: xr.DataArray,
-    obs_mean: np.ndarray,
-    obs_err: np.ndarray,
-) -> xr.DataArray:
+    predict_mean: Union[np.ndarray, xr.DataArray],
+    predict_err: Union[np.ndarray, xr.DataArray],
+    obs_mean: Union[np.ndarray, List],
+    obs_err: Union[np.ndarray, List],
+) -> Union[np.ndarray, xr.DataArray]:
     """
     Calculate implausibility score for set of predictions
 
@@ -41,22 +43,40 @@ def implausibility2(
     n_features = obs_mean.shape[0]
     if n_features != predict_mean.shape[0]:
         raise ValueError("Incompatible shapes between observations and predictions")
-    return xr.concat(
-        [
-            (predict_mean[i] - obs_mean[i]) ** 2
-            / (predict_err[i] ** 2 + obs_err[i] ** 2)
-            for i in range(n_features)
-        ],
-        dim="n_features",
-    ).sum(dim="n_features")
+    if isinstance(predict_mean, xr.DataArray):
+        return xr.concat(
+            [
+                (predict_mean[i] - obs_mean[i]) ** 2
+                / (predict_err[i] ** 2 + obs_err[i] ** 2)
+                for i in range(n_features)
+            ],
+            dim="n_features",
+        ).sum(dim="n_features")
+    if isinstance(predict_mean, np.ndarray):
+        return np.stack(
+            [
+                (predict_mean[i] - obs_mean[i]) ** 2
+                / (predict_err[i] ** 2 + obs_err[i] ** 2)
+                for i in range(n_features)
+            ]
+        ).sum(axis=0)
+
+
+def likilihood(
+    predict_mean: Union[np.ndarray, xr.DataArray],
+    predict_err: Union[np.ndarray, xr.DataArray],
+    obs_mean: Union[np.ndarray, List],
+    obs_err: Union[np.ndarray, List],
+) -> Union[np.ndarray, xr.DataArray]:
+    return np.exp(-0.5 * implausibility2(predict_mean, predict_err, obs_mean, obs_err))
 
 
 def implausibility(
-    predict_mean: xr.DataArray,
-    predict_err: xr.DataArray,
-    obs_mean: np.ndarray,
-    obs_err: np.ndarray,
-) -> xr.DataArray:
+    predict_mean: Union[np.ndarray, xr.DataArray],
+    predict_err: Union[np.ndarray, xr.DataArray],
+    obs_mean: Union[np.ndarray, List],
+    obs_err: Union[np.ndarray, List],
+) -> Union[np.ndarray, xr.DataArray]:
     return np.sqrt(implausibility2(predict_mean, predict_err, obs_mean, obs_err))
 
 
