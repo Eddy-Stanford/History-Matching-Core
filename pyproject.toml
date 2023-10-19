@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0","netcdf4>=1.6.2","xarray>=2023.2.0","joblib>=1.2.
 build-backend = "setuptools.build_meta"
 [project]
 name = "history_matching"
-version = "0.0.20"
+version = "0.0.21"
 authors = [
   { name="Robert King", email="robcking@stanford.edu" },
 ]

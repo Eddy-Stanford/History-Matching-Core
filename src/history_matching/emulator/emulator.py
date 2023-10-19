@@ -61,7 +61,7 @@ class Emulator(BaseEstimator):
             predictions_std = np.empty((self.n_features, *space_xr.shape)) * np.nan
             preds_flt, preds_std_flt = self.predict(X, return_std=True)
             for pred, pred_std, valid_point in zip(
-                preds_flt, preds_std_flt, valid_points
+                preds_flt, preds_std_flt, np.transpose(valid_points)
             ):
                 predictions[(slice(None), *valid_point)] = pred
                 predictions_std[(slice(None), *valid_point)] = pred_std
