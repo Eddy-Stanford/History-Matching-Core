@@ -1,3 +1,4 @@
+from .emulator import Emulator
 from .gp_emulator import GPEmulator
 from .implausibility import (
     chisquaredtest,

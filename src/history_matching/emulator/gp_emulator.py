@@ -76,7 +76,8 @@ class GPEmulator(BaseEstimator):
             X[i, :] = space_up[dim][valid_points[i, :]]
         X = np.transpose(X)
 
-        # TODO: This can almost certainly be implemented better with less code duplication
+        # TODO: This ca
+        # n almost certainly be implemented better with less code duplication
         if return_std:
             pred, pred_std = self.predict(X, return_std=True)
             predictions = np.empty((self.n_features, *space_up.shape)) * np.nan
