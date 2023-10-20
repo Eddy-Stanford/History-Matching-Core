@@ -10,7 +10,7 @@ from ..samples import SampleSpace
 
 class Emulator(BaseEstimator):
     def __init__(
-        self, n_features=2, random_state=None, kernel=None, n_restarts_optimizer=0
+        self, n_features=1, random_state=None, kernel=None, n_restarts_optimizer=0
     ) -> None:
         self.random_state = random_state
 
@@ -44,8 +44,8 @@ class Emulator(BaseEstimator):
         X = self.scaler_x.transform(X)
         values = np.array([gp.predict(X, return_std=return_std) for gp in self.__gps])
         if return_std:
-            return values[:, 0], values[:, 1]
-        return values
+            return np.transpose(values[:, 0]), np.transpose(values[:, 1])
+        return np.transpose(values)
 
     def predict_over_space(self, space: SampleSpace, return_std=False, resolution=None):
         space_xr = space.to_xarray(resolution=resolution)
