@@ -10,7 +10,7 @@ from ..samples import SampleSpace
 
 class Emulator(BaseEstimator):
     def __init__(
-        self, n_features=1, random_state=None, kernel=None, n_restarts_optimizer=0
+        self, n_features=2, random_state=None, kernel=None, n_restarts_optimizer=0
     ) -> None:
         self.random_state = random_state
 
@@ -71,6 +71,6 @@ class Emulator(BaseEstimator):
             )
         else:
             preds_flt = self.predict(X, return_std=False)
-            for pred, valid_point in zip(preds_flt, valid_points):
+            for pred, valid_point in zip(preds_flt, np.transpose(valid_points)):
                 predictions[(slice(None), *valid_point)] = pred
             return xr.DataArray(predictions, dims=dims, coords=coords)
