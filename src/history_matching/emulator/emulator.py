@@ -35,8 +35,19 @@ class Emulator(BaseEstimator):
         ]
         super().__init__()
 
-    def fit(self, X, y):
+    def fit(self, X, y, y_err=None):
         X = self.scaler_x.fit_transform(X)
+        if y_err is not None:
+            self.__gps = [
+                GaussianProcessRegressor(
+                    alpha=y_err[:, i] / (y.std() if y.std() != 0.0 else 1.0),
+                    normalize_y=True,
+                    random_state=self.random_state,
+                    kernel=self.kernel,
+                    n_restarts_optimizer=self.n_restarts_optimizer,
+                )
+                for i in range(self.n_features)
+            ]
         for i, gp in enumerate(self.__gps):
             gp.fit(X, y[:, i])
 
