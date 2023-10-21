@@ -80,9 +80,9 @@ def implausibility(
     return np.sqrt(implausibility2(predict_mean, predict_err, obs_mean, obs_err))
 
 
-def chisquaredtest(imp: xr.DataArray, significance: float):
+def chisquaredtest(imp2: xr.DataArray, significance: float):
     """
     imp: Implausibility DataArray, must be squared variation
     significance: 1- Significance level of chi squared test, e.g 95% SL would input 5% here.
     """
-    return imp < chi2.isf(significance, len(imp.dims))
+    return imp2 < chi2.isf(significance, len(imp2.dims))
