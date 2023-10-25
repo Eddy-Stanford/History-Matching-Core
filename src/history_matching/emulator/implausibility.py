@@ -62,7 +62,7 @@ def implausibility2(
         ).sum(axis=0)
 
 
-def likilihood(
+def likelihood(
     predict_mean: Union[np.ndarray, xr.DataArray],
     predict_err: Union[np.ndarray, xr.DataArray],
     obs_mean: Union[np.ndarray, List],
