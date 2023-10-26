@@ -41,7 +41,7 @@ class Emulator(BaseEstimator):
             y_err = y_err / (y.std(axis=0) if y.std() != 0 else 1.0)
             self.__gps = [
                 GaussianProcessRegressor(
-                    alpha=y_err[:, i],
+                    alpha=y_err[:, i] ** 2,
                     normalize_y=True,
                     random_state=self.random_state,
                     kernel=self.kernel,
