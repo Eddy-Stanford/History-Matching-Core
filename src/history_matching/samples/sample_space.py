@@ -105,6 +105,16 @@ class SampleSpace:
         samples = lhs(self.ndims, samples=n_samples, criterion=criterion)
         return self.__rescale_samples(samples)
 
+    def centroid(self):
+        sxr = self.to_xarray().astype(int)
+        denom = sxr.integrate(coord=self.coord_labels)
+        return np.array(
+            [
+                (sxr[c] * sxr).integrate(coord=self.coord_labels) / denom
+                for c in self.coord_labels
+            ]
+        )
+
     def lhs_sample(self, n_samples, criterion=None, labelled=False):
         if self.is_square_space:
             samples = self.__uniform_lhs_sample(n_samples, criterion=criterion)
