@@ -17,8 +17,7 @@ class Emulator(BaseEstimator):
         self.n_features = n_features
         if kernel is None:
             self.kernel = (
-                ConstantKernel() * RBF(length_scale=np.ones((self.n_features,)))
-                + WhiteKernel()
+                ConstantKernel() * RBF(length_scale_bounds=(0.05, 1)) + WhiteKernel()
             )
         else:
             self.kernel = kernel
