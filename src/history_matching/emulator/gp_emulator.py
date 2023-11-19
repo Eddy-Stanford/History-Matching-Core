@@ -11,10 +11,6 @@ from ..samples import SampleSpace
 
 class GPEmulator(BaseEstimator):
     def __init__(self, n_features=2, random_state=None, kernel=None):
-        warn(
-            "The GPEmulator class is deprecated, please use Emulator instead",
-            DeprecationWarning,
-        )
         self.random_state = random_state
         self.kernel = kernel
         self.n_features = n_features
