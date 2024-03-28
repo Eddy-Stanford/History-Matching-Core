@@ -12,11 +12,21 @@ class SampleSpace:
     DEFAULT_RESOLUTION = 1000  # Default resolution for axis
 
     @classmethod
-    def from_bounds(cls, *bounds, coord_labels=None):
+    def check_bounds(cls, bounds):
+        for b in bounds:
+            if len(b) > 2:
+                raise ValueError("More than 2 bounds specified")
+            if b[0] >= b[1]:
+                raise ValueError("Lower bound MUST be lower than upper bound")
+
+    @classmethod
+    def from_bounds(cls, bounds, coord_labels=None):
+        cls.check_bounds(bounds)
+        ndims = len(bounds)
         if coord_labels is None:
             coord_labels = [str(i) for i in range(len(bounds))]
         sample_space = xr.DataArray(
-            data=[(1, 1) for _ in bounds],
+            data=np.ones([2 for _ in range(ndims)]),
             dims=coord_labels,
             coords={l: list(bound) for l, bound in zip(coord_labels, bounds)},
         )
@@ -24,8 +34,8 @@ class SampleSpace:
         return instance
 
     @classmethod
-    def from_bound_dict(cls, bound_dict):
-        return cls.from_bounds(*bound_dict.values(), coord_labels=bound_dict.keys())
+    def from_bounds_dict(cls, bounds_dict):
+        return cls.from_bounds(bounds_dict.values(), coord_labels=bounds_dict.keys())
 
     @classmethod
     def from_xarray(cls, xr_ds: xr.DataArray):
