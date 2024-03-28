@@ -11,6 +11,7 @@ dill==0.3.6
 docutils==0.19
 idna==3.4
 importlib-metadata==6.0.0
+iniconfig==2.0.0
 isort==5.12.0
 jaraco.classes==3.2.3
 joblib==1.2.0
@@ -28,12 +29,14 @@ pandas==1.5.3
 pathspec==0.11.0
 pkginfo==1.9.6
 platformdirs==3.0.0
+pluggy==1.4.0
 pycodestyle==2.10.0
 pyDOE==0.3.8
 pyflakes==3.0.1
 Pygments==2.14.0
 pylint==2.16.2
 pyproject_hooks==1.0.0
+pytest==8.1.1
 python-dateutil==2.8.2
 pytz==2022.7.1
 pywin32-ctypes==0.2.0
