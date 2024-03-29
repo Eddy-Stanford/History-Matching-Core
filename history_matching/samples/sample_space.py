@@ -40,16 +40,13 @@ class SampleSpace:
     @classmethod
     def from_xarray(cls, xr_ds: xr.DataArray):
         xr_ds = xr_ds.astype(float)
-        bounded = np.nonzero(xr_ds)
+        bounded = np.nonzero(xr_ds.data)
         bounds = [
-            (float(bounded[coord][np.min(idxs)]), float(bounded[coord][np.max(idxs)]))
-            for idxs, coord in zip(bounded, bounded.coords)
+            (float(xr_ds[coord][np.min(idxs)]), float(xr_ds[coord][np.max(idxs)]))
+            for idxs, coord in zip(bounded, xr_ds.coords)
         ]
-        cropped_ds = xr_ds.interp(
-            coords={
-                k: np.linspace(bounds[i][0], bounds[i][1], cls.DEFAULT_RESOLUTION)
-                for i, k in enumerate(xr_ds.dims)
-            }
+        cropped_ds = xr_ds.sel(
+            {k: slice(v[0], v[1]) for k, v in zip(xr_ds.dims, bounds)}
         )
         instance = cls(
             bounds=bounds,

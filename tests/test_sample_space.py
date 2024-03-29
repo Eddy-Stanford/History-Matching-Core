@@ -1,4 +1,6 @@
+import numpy as np
 import pytest
+import xarray
 
 from history_matching.samples import SampleSpace
 
@@ -80,3 +82,21 @@ def test_uniform_space(bounds):
     for dim in range(space.ndims):
         assert (sample[:, dim] < bounds[dim][1]).all()
         assert (sample[:, dim] >= bounds[dim][0]).all()
+
+
+@pytest.mark.parametrize(
+    "dim,",
+    [1, 2, 3, 4, 5],
+)
+def test_from_xarray(dim):
+    data = (
+        np.sum(np.meshgrid(*[np.linspace(0, 1, 10) for _ in range(dim)]), axis=0) / dim
+        > 0.5
+    )
+    ds = xarray.DataArray(
+        data=data, coords={str(d): np.linspace(0, 1, 10) for d in range(dim)}
+    )
+    space = SampleSpace.from_xarray(ds)
+    assert isinstance(space, SampleSpace)
+    samples = space.uniform(100)
+    assert (samples.sum(axis=-1) > 0.5).all()  # Check samples make sense
