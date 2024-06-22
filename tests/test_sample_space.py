@@ -86,7 +86,7 @@ def test_uniform_space(bounds):
 
 @pytest.mark.parametrize(
     "dim,",
-    [1, 2, 3, 4, 5],
+    [1, 2, 3, 4, 5, 6],
 )
 def test_from_xarray(dim):
     data = (
